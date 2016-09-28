@@ -110,7 +110,7 @@ class ProgressBar:
             sep_end=self.sep_end
         )
 
-    def summary_length(self):
+    def summary_width(self):
         """Calculate how long a string is needed to show a summary string.
 
         This is not simply the length of the formatted summary string
@@ -159,6 +159,14 @@ class StatusBar:
         """
         self._progress.add_progress(count, symbol, fg, bg, style)
 
+    def summary_width(self):
+        """Get the minimum width the progress summary field will use."""
+        return self._progress.summary_width()
+
+    def label_width(self):
+        """Get the minimum width the progress label field will use."""
+        return len(self.label)
+
     def format_status(self, width=None,
                       label_width=None,
                       progress_width=None,
@@ -170,7 +178,7 @@ class StatusBar:
         if label_width is None:
             label_width = len(self.label)
         if summary_width is None:
-            summary_width = self._progress.summary_length()
+            summary_width = self.summary_width()
         if progress_width is None:
             progress_width = width - label_width - summary_width - 2
 
@@ -193,3 +201,97 @@ class StatusBar:
             progress=progress,
             summary=summary
         )
+
+
+class StatusTable:
+    """Several lines of status bars with the three fields aligned."""
+
+    def __init__(self, progress_sep_start='[', progress_sep_end=']'):
+        """Create a status table."""
+        self._lines = []
+        self._sep_start = progress_sep_start
+        self._sep_end = progress_sep_end
+
+    def add_status_line(self, label):
+        """Add a status bar line to the table.
+
+        This function returns the status bar and it can be modified
+        from this return value.
+        """
+        status_line = StatusBar(label, self._sep_start, self._sep_end)
+        self._lines.append(status_line)
+        return status_line
+
+    def summary_width(self):
+        """Compute the minimum size needed for the summary field."""
+        return max(
+            sb.summary_width() for sb in self._lines
+        )
+
+    def label_width(self):
+        """Compute the minimum size needed for the label field.
+
+        This is the minimum size needed if all labels are shown in full.
+        If there is not room on a line to shown them in full they will
+        be truncated."""
+        return max(
+            sb.label_width() for sb in self._lines
+        )
+
+    def calculate_field_widths(self, width=None,
+                               min_label_width=10,
+                               min_progress_width=10):
+        """Calculate how wide each field should be so we can align them.
+
+        We always find room for the summaries since these are short and
+        packed with information. If possible, we will also find room for
+        labels, but if this would make the progress bar width shorter than
+        the specified minium then we will shorten the labels, though never
+        below the minium there. If this mean we have bars that are too wide
+        for the terminal, then your terminal needs to be wider.
+        """
+        if width is None:  # pragma: no cover
+            width = shutil.get_terminal_size()[0]
+
+        summary_width = self.summary_width()
+        label_width = self.label_width()
+        remaining = width - summary_width - label_width - 2
+
+        if remaining >= min_progress_width:
+            progress_width = remaining
+        else:
+            progress_width = min_progress_width
+            remaining = width - summary_width - progress_width - 2
+            if remaining >= min_label_width:
+                label_width = remaining
+            else:
+                label_width = min_label_width
+
+        return (label_width, progress_width, summary_width)
+
+    def format_table(self, width=None,
+                     min_label_width=10, min_progress_width=10):
+        """Format the entire table of progress bars.
+
+        The function first computes the widths of the fields so they can be
+        aligned across lines and then returns formatted lines as a list of
+        strings.
+        """
+        if width is None:  # pragma: no cover
+            width = shutil.get_terminal_size()[0]
+
+        labelw, progw, summaryw = self.calculate_field_widths(
+            width=width,
+            min_label_width=min_label_width,
+            min_progress_width=min_progress_width
+        )
+        output = [
+            sb.format_status(
+                label_width=labelw,
+                progress_width=progw,
+                summary_width=summaryw
+            )
+            for sb in self._lines
+        ]
+
+        return output

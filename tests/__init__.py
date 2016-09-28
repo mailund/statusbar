@@ -106,7 +106,7 @@ class TestProgressBar(unittest.TestCase):
         pb = statusbar.ProgressBar()
         pb.add_progress(1, '.')
         pb.add_progress(1, '#')
-        estimated_length = pb.summary_length()
+        estimated_length = pb.summary_width()
         summary_string = pb.format_summary()
         self.assertEqual(estimated_length, 3)
         self.assertEqual(len(summary_string), 3)
@@ -115,7 +115,7 @@ class TestProgressBar(unittest.TestCase):
         pb = statusbar.ProgressBar()
         pb.add_progress(0, '.')
         pb.add_progress(1, '#')
-        estimated_length = pb.summary_length()
+        estimated_length = pb.summary_width()
         summary_string = pb.format_summary()
         self.assertEqual(estimated_length, 3)
         self.assertEqual(len(summary_string), 3)
@@ -124,7 +124,7 @@ class TestProgressBar(unittest.TestCase):
         pb = statusbar.ProgressBar()
         pb.add_progress(0, '.')
         pb.add_progress(0, '#')
-        estimated_length = pb.summary_length()
+        estimated_length = pb.summary_width()
         summary_string = pb.format_summary()
         self.assertEqual(estimated_length, 3)
         self.assertEqual(len(summary_string), 3)
@@ -133,7 +133,7 @@ class TestProgressBar(unittest.TestCase):
         pb = statusbar.ProgressBar()
         pb.add_progress(9, '.')
         pb.add_progress(9, '#')
-        estimated_length = pb.summary_length()
+        estimated_length = pb.summary_width()
         summary_string = pb.format_summary()
         self.assertEqual(estimated_length, 3)
         self.assertEqual(len(summary_string), 3)
@@ -142,7 +142,7 @@ class TestProgressBar(unittest.TestCase):
         pb = statusbar.ProgressBar()
         pb.add_progress(10, '.')
         pb.add_progress(10, '#')
-        estimated_length = pb.summary_length()
+        estimated_length = pb.summary_width()
         summary_string = pb.format_summary()
         self.assertEqual(estimated_length, 5)
         self.assertEqual(len(summary_string), 5)
@@ -151,7 +151,7 @@ class TestProgressBar(unittest.TestCase):
         pb = statusbar.ProgressBar()
         pb.add_progress(99, '.')
         pb.add_progress(99, '#')
-        estimated_length = pb.summary_length()
+        estimated_length = pb.summary_width()
         summary_string = pb.format_summary()
         self.assertEqual(estimated_length, 5)
         self.assertEqual(len(summary_string), 5)
@@ -160,7 +160,7 @@ class TestProgressBar(unittest.TestCase):
         pb = statusbar.ProgressBar()
         pb.add_progress(100, '.')
         pb.add_progress(199, '#')
-        estimated_length = pb.summary_length()
+        estimated_length = pb.summary_width()
         summary_string = pb.format_summary()
         self.assertEqual(estimated_length, 7)
         self.assertEqual(len(summary_string), 7)
@@ -213,3 +213,66 @@ class TestStatusBar(unittest.TestCase):
         self.assertEqual(result[:5], "L... ")
         self.assertEqual(result[-6:], "   2/2")
         self.assertEqual(result[5:-6], "[####....]")
+
+
+class TestStatusTable(unittest.TestCase):
+    """Test of a status table."""
+
+    def test_field_width_calculations(self):
+        st = statusbar.StatusTable()
+
+        label1 = "Test"
+        sb = st.add_status_line(label1)
+        sb.add_progress(1, "#")
+        sb.add_progress(1, " ")
+
+        label2 = "Testing progress"
+        sb = st.add_status_line(label2)
+        sb.add_progress(10, "#")
+        sb.add_progress(10, " ")
+
+        self.assertEqual(st.label_width(), len(label2))
+        self.assertEqual(st.summary_width(), len("10/10"))
+
+        labw, progw, sumw = st.calculate_field_widths(width=30)
+        self.assertEqual(sumw, 5)
+        self.assertEqual(progw, 10)
+        self.assertEqual(labw, 15 - 2)
+
+        labw, progw, sumw = st.calculate_field_widths(width=40)
+        self.assertEqual(sumw, 5)
+        self.assertEqual(labw, len(label2))
+        self.assertEqual(progw, 40 - len(label2) - 5 - 2)
+
+        labw, progw, sumw = st.calculate_field_widths(width=1)
+        self.assertEqual(sumw, 5)
+        self.assertEqual(progw, 10)
+        self.assertEqual(labw, 10)
+
+    def test_table_formatting(self):
+        st = statusbar.StatusTable()
+
+        label1 = "Test"
+        sb = st.add_status_line(label1)
+        sb.add_progress(1, "#")
+        sb.add_progress(1, " ")
+
+        label2 = "Testing progress"
+        sb = st.add_status_line(label2)
+        sb.add_progress(10, "#")
+        sb.add_progress(10, " ")
+
+        formatted = st.format_table(width=40)
+        labelw = len(label2)
+        statusw = len("10/10")
+        progressw = 40 - labelw - statusw - 2
+
+        first_label = formatted[0][:labelw]
+        second_label = formatted[1][:labelw]
+        first_status = formatted[0][-statusw:]
+        second_status = formatted[1][-statusw:]
+
+        self.assertEqual(first_label, "Test............")
+        self.assertEqual(second_label, label2)
+        self.assertEqual(first_status, "  1/1")
+        self.assertEqual(second_status, "10/10")
