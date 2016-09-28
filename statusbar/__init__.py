@@ -1,6 +1,5 @@
-"""
-Module for constructing text-based status updates.
-"""
+"""Module for constructing text-based status updates."""
+
 import shutil
 import itertools
 import colorama
@@ -54,11 +53,13 @@ class ProgressBar:
     """Class responsible for showing progress of a task."""
 
     def __init__(self, sep_start='[', sep_end=']'):
+        """Construct a progress bar."""
         self._progress_chunks = []
         self.sep_start = sep_start
         self.sep_end = sep_end
 
     def set_progress_brackets(self, start, end):
+        """Set brackets to set around a progress bar."""
         self.sep_start = start
         self.sep_end = end
 
@@ -98,6 +99,7 @@ class ProgressBar:
         return chunk_widths
 
     def format_progress(self, width):
+        """Create the formatted string that displays the progress."""
         chunk_widths = self._get_chunk_sizes(width)
         progress_chunks = [chunk.format_chunk(chunk_width)
                            for (chunk, chunk_width)
@@ -110,8 +112,10 @@ class ProgressBar:
 
     def summary_length(self):
         """Calculate how long a string is needed to show a summary string.
+
         This is not simply the length of the formatted summary string
-        since that string might contain ANSI codes."""
+        since that string might contain ANSI codes.
+        """
         chunk_counts = [chunk.count for chunk in self._progress_chunks]
         numbers_width = sum(max(1, ceil(log10(count + 1)))
                             for count in chunk_counts)
@@ -126,17 +130,20 @@ class ProgressBar:
 
 
 class StatusBar:
-    """Class for displaying status bars. These bars consists of a label,
-    a progress bar, and statistics/summaries of the progress."""
+    """Class for displaying status bars.
+
+    These bars consists of a label, a progress bar, and statistics/summaries
+    of the progress.
+    """
 
     def __init__(self, label,
                  progress_sep_start='[', progress_sep_end=']'):
+        """Construct a status bar."""
         self.label = label
         self._progress = ProgressBar(progress_sep_start, progress_sep_end)
 
     def set_progress_brackets(self, start, end):
-        """Define how the brackets around the progress part of the statusbar
-        should look."""
+        """Define which braces should be used around the progress bar."""
         self._progress.set_progress_brackets(start, end)
 
     def add_progress(self, count, symbol='#',

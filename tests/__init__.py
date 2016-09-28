@@ -166,6 +166,7 @@ class TestProgressBar(unittest.TestCase):
         self.assertEqual(len(summary_string), 7)
         self.assertEqual(summary_string, "100/199")
 
+
 class TestStatusBar(unittest.TestCase):
     """Test of a status bar."""
 
