@@ -165,3 +165,21 @@ class TestProgressBar(unittest.TestCase):
         self.assertEqual(estimated_length, 7)
         self.assertEqual(len(summary_string), 7)
         self.assertEqual(summary_string, "100/199")
+
+class TestStatusBar(unittest.TestCase):
+    """Test of a status bar."""
+
+    def test_status_formatting(self):
+        sb = statusbar.StatusBar("Test")
+        sb.add_progress(2, '#')
+        sb.add_progress(2, '.')
+        result = sb.format_status(15)
+        self.assertEqual(result[:5], "Test ")
+        self.assertEqual(result[-4:], " 2/2")
+        self.assertEqual(result[5:-4], "[##..]")
+
+        sb.set_progress_brackets("", "")
+        result = sb.format_status(15)
+        self.assertEqual(result[:5], "Test ")
+        self.assertEqual(result[-4:], " 2/2")
+        self.assertEqual(result[5:-4], "###...")

@@ -58,6 +58,10 @@ class ProgressBar:
         self.sep_start = sep_start
         self.sep_end = sep_end
 
+    def set_progress_brackets(self, start, end):
+        self.sep_start = start
+        self.sep_end = end
+
     def add_progress(self, count, symbol='#',
                      fg=None, bg=None, style=None):
         """Add a section of progress to the progressbar.
@@ -128,13 +132,12 @@ class StatusBar:
     def __init__(self, label,
                  progress_sep_start='[', progress_sep_end=']'):
         self.label = label
-        self._progress = ProgressBar()
-        self._progress_sep_start = progress_sep_start
-        self._progress_sep_end = progress_sep_end
+        self._progress = ProgressBar(progress_sep_start, progress_sep_end)
 
     def set_progress_brackets(self, start, end):
-        self._progress_sep_start = start
-        self._progress_sep_end = end
+        """Define how the brackets around the progress part of the statusbar
+        should look."""
+        self._progress.set_progress_brackets(start, end)
 
     def add_progress(self, count, symbol='#',
                      fg=None, bg=None, style=None):
@@ -153,17 +156,16 @@ class StatusBar:
                       label_width=None, min_progress_width=10,
                       summary_width=None):
         """Generate the formatted status bar string."""
-        if width is None:
+        if width is None:  # pragma: no cover
             width = shutil.get_terminal_size()[0]
 
         label = self.label
-        summary = ""
+        summary = self._progress.format_summary()
 
-        progress = self._progress.format_progress(
-            width=width-len(label)-2,
-            sep_start=self._progress_sep_start,
-            sep_end=self._progress_sep_end
-        )
+        label_width = len(label)
+        summary_width = self._progress.summary_length()
+        progress_width = width - label_width - summary_width - 2
+        progress = self._progress.format_progress(width=progress_width)
 
         return "{label} {progress} {summary}".format(
             label=label,
