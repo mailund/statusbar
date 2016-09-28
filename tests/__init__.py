@@ -193,7 +193,6 @@ class TestStatusBar(unittest.TestCase):
         self.assertEqual(result[-4:], " 2/2")
         self.assertEqual(result[5:-4], "[##..]")
 
-
         sb = statusbar.StatusBar("Long label")
         sb.add_progress(2, '#')
         sb.add_progress(2, '.')
