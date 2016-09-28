@@ -71,3 +71,33 @@ class TestProgressBar(unittest.TestCase):
         self.assertEqual(progress[17:19], "##")
         self.assertEqual(progress[19:24], colorama.Fore.RESET)
         self.assertEqual(progress[24], "]")
+
+        # Adding a background and style as well makes the string even longer
+        # but other than that there is nothing surprising going on.
+        pb = statusbar.ProgressBar()
+        pb.add_progress(1, '.',
+                        fg=colorama.Fore.GREEN, bg=colorama.Back.RED,
+                        style=colorama.Style.BRIGHT)
+        pb.add_progress(2, '#',
+                        fg=colorama.Fore.RED, bg=colorama.Back.GREEN,
+                        style=colorama.Style.DIM)
+        progress = pb.format_progress(5)
+        self.assertEqual(progress[0], "[")
+
+        self.assertEqual(progress[1:5], colorama.Style.BRIGHT)
+        self.assertEqual(progress[5:10], colorama.Back.RED)
+        self.assertEqual(progress[10:15], colorama.Fore.GREEN)
+        self.assertEqual(progress[15], ".")
+        self.assertEqual(progress[16:21], colorama.Fore.RESET)
+        self.assertEqual(progress[21:26], colorama.Back.RESET)
+        self.assertEqual(progress[26:30], colorama.Style.RESET_ALL)
+
+        self.assertEqual(progress[30:34], colorama.Style.DIM)
+        self.assertEqual(progress[34:39], colorama.Back.GREEN)
+        self.assertEqual(progress[39:44], colorama.Fore.RED)
+        self.assertEqual(progress[44:46], "##")
+        self.assertEqual(progress[46:51], colorama.Fore.RESET)
+        self.assertEqual(progress[51:56], colorama.Back.RESET)
+        self.assertEqual(progress[56:60], colorama.Style.RESET_ALL)
+
+        self.assertEqual(progress[60], "]")
