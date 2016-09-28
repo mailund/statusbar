@@ -265,7 +265,6 @@ class TestStatusTable(unittest.TestCase):
         formatted = st.format_table(width=40)
         labelw = len(label2)
         statusw = len("10/10")
-        progressw = 40 - labelw - statusw - 2
 
         first_label = formatted[0][:labelw]
         second_label = formatted[1][:labelw]
