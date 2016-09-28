@@ -8,3 +8,19 @@ Python package for displaying status information in command line interfaces.
 
 
 This package can be used to show status information through one or more lines of formatted status bars where each status bar consist of three components: a label, a progress bar, and a statistics/summary field.
+
+```Python
+import colorama
+import statusbar
+
+bar = statusbar.StatusBar("Test status")
+bar.add_progress(10, "#")
+bar.add_progress(5, ".")
+print(bar.format_status())
+
+bar = statusbar.StatusBar("Test status")
+bar.set_progress_brackets('','')
+bar.add_progress(10, " ", bg=colorama.Back.GREEN)
+bar.add_progress(5, " ", bg=colorama.Back.RED)
+print(bar.format_status())
+```

@@ -1,8 +1,10 @@
 """
 Module for constructing text-based status updates.
 """
-import colorama
+import shutil
 import itertools
+import colorama
+from math import log10, ceil
 
 colorama.init()
 
@@ -40,12 +42,21 @@ class _ProgressChunk:
             format_end=self.fg_reset + self.bg_reset + self.style_reset
         )
 
+    def format_chunk_summary(self):
+        return "{format_start}{count}{format_end}".format(
+            format_start=self.style + self.bg + self.fg,
+            count=self.count,
+            format_end=self.fg_reset + self.bg_reset + self.style_reset
+        )
+
 
 class ProgressBar:
     """Class responsible for showing progress of a task."""
 
-    def __init__(self):
+    def __init__(self, sep_start='[', sep_end=']'):
         self._progress_chunks = []
+        self.sep_start = sep_start
+        self.sep_end = sep_end
 
     def add_progress(self, count, symbol='#',
                      fg=None, bg=None, style=None):
@@ -62,6 +73,12 @@ class ProgressBar:
         self._progress_chunks.append(chunk)
 
     def _get_chunk_sizes(self, width):
+
+        # FIXME: using len() here doesn't work with invisible symbols
+        # or things like tabs that take up one character but uses more
+        # space in the terminal.
+        width = width - len(self.sep_start + self.sep_end)
+
         chunk_counts = [chunk.count for chunk in self._progress_chunks]
         total = sum(chunk_counts)
         chunk_real_widths = [chunk/total*width for chunk in chunk_counts]
@@ -77,11 +94,79 @@ class ProgressBar:
         return chunk_widths
 
     def format_progress(self, width):
-        """Format the progress bar to fit into "width" characters."""
-        # Because we use two characters for brackets the width we have
-        # for the chunks is width - 2.
-        chunk_widths = self._get_chunk_sizes(width - 2)
+        chunk_widths = self._get_chunk_sizes(width)
         progress_chunks = [chunk.format_chunk(chunk_width)
                            for (chunk, chunk_width)
                            in zip(self._progress_chunks, chunk_widths)]
-        return "[{}]".format("".join(progress_chunks))
+        return "{sep_start}{progress}{sep_end}".format(
+            sep_start=self.sep_start,
+            progress="".join(progress_chunks),
+            sep_end=self.sep_end
+        )
+
+    def summary_length(self):
+        """Calculate how long a string is needed to show a summary string.
+        This is not simply the length of the formatted summary string
+        since that string might contain ANSI codes."""
+        chunk_counts = [chunk.count for chunk in self._progress_chunks]
+        numbers_width = sum(max(1, ceil(log10(count + 1)))
+                            for count in chunk_counts)
+        separators_with = len(chunk_counts) - 1
+        return numbers_width + separators_with
+
+    def format_summary(self):
+        """Generate a summary string for the progress bar."""
+        chunks = [chunk.format_chunk_summary()
+                  for chunk in self._progress_chunks]
+        return "/".join(chunks)
+
+
+class StatusBar:
+    """Class for displaying status bars. These bars consists of a label,
+    a progress bar, and statistics/summaries of the progress."""
+
+    def __init__(self, label,
+                 progress_sep_start='[', progress_sep_end=']'):
+        self.label = label
+        self._progress = ProgressBar()
+        self._progress_sep_start = progress_sep_start
+        self._progress_sep_end = progress_sep_end
+
+    def set_progress_brackets(self, start, end):
+        self._progress_sep_start = start
+        self._progress_sep_end = end
+
+    def add_progress(self, count, symbol='#',
+                     fg=None, bg=None, style=None):
+        """Add a section of progress to the progressbar.
+
+        The progress is captured by "count" and displayed as a fraction
+        of the statusbar width proportional to this count over the total
+        progress displayed. The progress will be displayed using the "symbol"
+        character and the foreground and background colours and display style
+        determined by the the "fg", "bg" and "style" parameters. For these,
+        use the colorama package to set up the formatting.
+        """
+        self._progress.add_progress(count, symbol, fg, bg, style)
+
+    def format_status(self, width=None,
+                      label_width=None, min_progress_width=10,
+                      summary_width=None):
+        """Generate the formatted status bar string."""
+        if width is None:
+            width = shutil.get_terminal_size()[0]
+
+        label = self.label
+        summary = ""
+
+        progress = self._progress.format_progress(
+            width=width-len(label)-2,
+            sep_start=self._progress_sep_start,
+            sep_end=self._progress_sep_end
+        )
+
+        return "{label} {progress} {summary}".format(
+            label=label,
+            progress=progress,
+            summary=summary
+        )
