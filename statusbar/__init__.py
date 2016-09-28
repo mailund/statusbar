@@ -160,18 +160,32 @@ class StatusBar:
         self._progress.add_progress(count, symbol, fg, bg, style)
 
     def format_status(self, width=None,
-                      label_width=None, min_progress_width=10,
+                      label_width=None,
+                      progress_width=None,
                       summary_width=None):
         """Generate the formatted status bar string."""
         if width is None:  # pragma: no cover
             width = shutil.get_terminal_size()[0]
 
-        label = self.label
-        summary = self._progress.format_summary()
+        if label_width is None:
+            label_width = len(self.label)
+        if summary_width is None:
+            summary_width = self._progress.summary_length()
+        if progress_width is None:
+            progress_width = width - label_width - summary_width - 2
 
-        label_width = len(label)
-        summary_width = self._progress.summary_length()
-        progress_width = width - label_width - summary_width - 2
+        if len(self.label) > label_width:
+            # FIXME: This actually *will* break if we ever have fewer than
+            # three characters assigned to format the label, but that would
+            # be an extreme situation so I won't fix it just yet.
+            label = self.label[:label_width - 3] + "..."
+        else:
+            label_format = "{{label:.<{width}}}".format(width=label_width)
+            label = label_format.format(label=self.label)
+
+        summary_format = "{{:>{width}}}".format(width=summary_width)
+        summary = summary_format.format(self._progress.format_summary())
+
         progress = self._progress.format_progress(width=progress_width)
 
         return "{label} {progress} {summary}".format(

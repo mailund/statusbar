@@ -184,3 +184,33 @@ class TestStatusBar(unittest.TestCase):
         self.assertEqual(result[:5], "Test ")
         self.assertEqual(result[-4:], " 2/2")
         self.assertEqual(result[5:-4], "###...")
+
+        sb = statusbar.StatusBar("Long label")
+        sb.add_progress(2, '#')
+        sb.add_progress(2, '.')
+        result = sb.format_status(15, label_width=4)
+        self.assertEqual(result[:5], "L... ")
+        self.assertEqual(result[-4:], " 2/2")
+        self.assertEqual(result[5:-4], "[##..]")
+
+
+        sb = statusbar.StatusBar("Long label")
+        sb.add_progress(2, '#')
+        sb.add_progress(2, '.')
+        result = sb.format_status(26, label_width=15)
+        self.assertEqual(result[:16], "Long label..... ")
+        self.assertEqual(result[-4:], " 2/2")
+        self.assertEqual(result[16:-4], "[##..]")
+
+        result = sb.format_status(label_width=4,
+                                  progress_width=10)
+        self.assertEqual(result[:5], "L... ")
+        self.assertEqual(result[-4:], " 2/2")
+        self.assertEqual(result[5:-4], "[####....]")
+
+        result = sb.format_status(label_width=4,
+                                  progress_width=10,
+                                  summary_width=5)
+        self.assertEqual(result[:5], "L... ")
+        self.assertEqual(result[-6:], "   2/2")
+        self.assertEqual(result[5:-6], "[####....]")
