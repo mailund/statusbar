@@ -34,7 +34,11 @@ class _ProgressChunk:
             self.style_reset = colorama.Style.RESET_ALL
 
     def format_chunk(self, width):
-        pass
+        return "{format_start}{bar}{format_end}".format(
+            format_start=self.style + self.bg + self.fg,
+            bar=self.symbol * width,
+            format_end=self.fg_reset + self.bg_reset + self.style_reset
+        )
 
 
 class ProgressBar:
@@ -74,4 +78,10 @@ class ProgressBar:
 
     def format_progress(self, width):
         """Format the progress bar to fit into "width" characters."""
-        pass
+        # Because we use two characters for brackets the width we have
+        # for the chunks is width - 2.
+        chunk_widths = self._get_chunk_sizes(width - 2)
+        progress_chunks = [chunk.format_chunk(chunk_width)
+                           for (chunk, chunk_width)
+                           in zip(self._progress_chunks, chunk_widths)]
+        return "[{}]".format("".join(progress_chunks))
