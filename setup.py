@@ -27,7 +27,7 @@ setup(
     keywords="CLI status output",
     url="https://github.com/mailund/statusbar",
     description="Module for displaying (text based) status update lines.",
-    long_description=read('README.md'),
+    long_description=read('README.rst'),
 
     classifiers=[
         "Development Status :: 4 - Beta",
