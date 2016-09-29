@@ -32,7 +32,7 @@ Python package for displaying status information in command line interfaces.
 
 This package can be used to show status information through one or more lines of formatted status bars where each status bar consist of three components: a label, a progress bar, and a statistics/summary field.
 
-.. code-block:: python
+.. code:: python
    import colorama
    import statusbar
 
