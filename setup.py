@@ -33,7 +33,7 @@ setup(
         "Development Status :: 4 - Beta",
         "Environment :: Console",
         "Topic :: Utilities",
-        "License :: OSI Approved :: GNU General Public License (GPLv3)",
+        "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
         "Programming Language :: Python",
     ],
 )
