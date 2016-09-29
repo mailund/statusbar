@@ -9,3 +9,12 @@ install:
 script: make test && make lint
 after_success:
 - coveralls
+deploy:
+  provider: pypi
+  user: mailund
+  password:
+    secure: nQg5tbd7n77rPgy77g9SK0buvzVW/j+tvAteID4v7zP25LsdIWft1v02+huanw7NHCVcv7U29o/ExWjeq0zt5liJnJClRCbcTAczhcCd7UhAjlQyGNiI/1nOfyozbk3lbaEg8gJUBW2EMEEdiJoGP6iyHWwLj9YcWZTXFw3olkExGCkrs7u3kKhTUdenIqmPHXS7/KCwafte2zy/Iu10gonOxCP8NUYbhpcqcFEmyd54AVXorqGQU4IsrgNmxSaclK4PyNKPEl0iYfNB7GAPvIt0lsmy7NwmAz5SaBYJRs9Jf3hRmdduUVhoqx/iZmg1Zc1NmvQlG5oi465mpuY4K6oZOLmLn36/Uq8Y5iJMjE1r9nWOJxKaVJSgBnqUHViT5suErKDetmuobmA9qNoceGwW59qNG7BIaRmvOvjAfRgb2V1vYMusjZXxGxmJFKKIvnwUicNUw6U1vg/pRN4zk0n8mAfSe4dTudfofCamR0aeH6L/BCHGk+W7CGObBpP++WX85pz4FRZ3O4ZXTBFWFglNZfkpdEBY7AoFLakUaz2g4zOFVIMpt8iowOKbF2KLGZCol5CcmB+GTB7jsAOpZYUv0YTHrI+93WQutfPQIA+3txtH6ebO12zHd4RJgNv4hEGz4p9zoI+xE7BLtkfm8HQd3lw/clqNfgAPGRXPtJs=
+  on:
+    tags: true
+    distributions: sdist bdist_wheel
+    repo: mailund/statusbar
