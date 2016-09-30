@@ -11,13 +11,12 @@ def read(fname):
 
 setup(
     name="statusbar",
-    version="0.1.1",
+    version="0.1.2",
 
     packages=find_packages(),
 
     test_suite='tests',
     install_requires=[
-        "colorama>=0.3.7",
         "termcolor>=1.1.0",
     ],
 
