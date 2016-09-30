@@ -3,49 +3,34 @@
 import shutil
 import itertools
 import colorama
+import termcolor
 from math import log10, ceil
 
 colorama.init()
 
 
 class _ProgressChunk:
-    def __init__(self, count, symbol, fg, bg, style):
+    def __init__(self, count, symbol, color, on_color, attrs):
         self.count = count
         self.symbol = symbol
-        self.fg = fg
-        self.bg = bg
-        self.style = style
-
-        if self.fg is None:
-            self.fg = ''
-            self.fg_reset = ''
-        else:
-            self.fg_reset = colorama.Fore.RESET
-
-        if self.bg is None:
-            self.bg = ''
-            self.bg_reset = ''
-        else:
-            self.bg_reset = colorama.Back.RESET
-
-        if self.style is None:
-            self.style = ''
-            self.style_reset = ''
-        else:
-            self.style_reset = colorama.Style.RESET_ALL
+        self.color = color
+        self.on_color = on_color
+        self.attrs = attrs
 
     def format_chunk(self, width):
-        return "{format_start}{bar}{format_end}".format(
-            format_start=self.style + self.bg + self.fg,
-            bar=self.symbol * width,
-            format_end=self.fg_reset + self.bg_reset + self.style_reset
+        return termcolor.colored(
+            self.symbol * width,
+            self.color,
+            self.on_color,
+            self.attrs
         )
 
     def format_chunk_summary(self):
-        return "{format_start}{count}{format_end}".format(
-            format_start=self.style + self.bg + self.fg,
-            count=self.count,
-            format_end=self.fg_reset + self.bg_reset + self.style_reset
+        return termcolor.colored(
+            "{count}".format(count=self.count),
+            self.color,
+            None,
+            self.attrs
         )
 
 
@@ -64,17 +49,17 @@ class ProgressBar:
         self.sep_end = end
 
     def add_progress(self, count, symbol='#',
-                     fg=None, bg=None, style=None):
+                     color=None, on_color=None, attrs=None):
         """Add a section of progress to the progressbar.
 
         The progress is captured by "count" and displayed as a fraction
         of the statusbar width proportional to this count over the total
         progress displayed. The progress will be displayed using the "symbol"
         character and the foreground and background colours and display style
-        determined by the the "fg", "bg" and "style" parameters. For these,
-        use the colorama package to set up the formatting.
+        determined by the the "color", "on_color" and "attrs" parameters.
+        These parameters work as the termcolor.colored function.
         """
-        chunk = _ProgressChunk(count, symbol, fg, bg, style)
+        chunk = _ProgressChunk(count, symbol, color, on_color, attrs)
         self._progress_chunks.append(chunk)
 
     def _get_chunk_sizes(self, width):
@@ -147,7 +132,7 @@ class StatusBar:
         self._progress.set_progress_brackets(start, end)
 
     def add_progress(self, count, symbol='#',
-                     fg=None, bg=None, style=None):
+                     color=None, on_color=None, attrs=None):
         """Add a section of progress to the progressbar.
 
         The progress is captured by "count" and displayed as a fraction
@@ -157,7 +142,7 @@ class StatusBar:
         determined by the the "fg", "bg" and "style" parameters. For these,
         use the colorama package to set up the formatting.
         """
-        self._progress.add_progress(count, symbol, fg, bg, style)
+        self._progress.add_progress(count, symbol, color, on_color, attrs)
 
     def summary_width(self):
         """Get the minimum width the progress summary field will use."""

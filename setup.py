@@ -18,6 +18,7 @@ setup(
     test_suite='tests',
     install_requires=[
         "colorama>=0.3.7",
+        "termcolor>=1.1.0",
     ],
 
     # metadata for upload to PyPI
