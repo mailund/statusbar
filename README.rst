@@ -34,7 +34,6 @@ This package can be used to show status information through one or more lines of
 
 .. code-block:: python
 
-   import colorama
    import statusbar
 
    bar = statusbar.StatusBar("Test status")
@@ -44,8 +43,8 @@ This package can be used to show status information through one or more lines of
 
    bar = statusbar.StatusBar("Test status")
    bar.set_progress_brackets('','')
-   bar.add_progress(10, " ", bg=colorama.Back.GREEN)
-   bar.add_progress(5, " ", bg=colorama.Back.RED)
+   bar.add_progress(10, " ", color="green")
+   bar.add_progress(5, " ", color="red")
    print(bar.format_status())
 
    st = statusbar.StatusTable()
