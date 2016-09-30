@@ -277,6 +277,10 @@ class StatusTable:
         aligned across lines and then returns formatted lines as a list of
         strings.
         """
+        # handle the special case of an empty table.
+        if len(self._lines) == 0:
+            return []
+
         if width is None:  # pragma: no cover
             width = shutil.get_terminal_size()[0]
 

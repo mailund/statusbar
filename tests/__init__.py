@@ -251,6 +251,7 @@ class TestStatusTable(unittest.TestCase):
 
     def test_table_formatting(self):
         st = statusbar.StatusTable()
+        self.assertEqual(st.format_table(), [])
 
         label1 = "Test"
         sb = st.add_status_line(label1)
