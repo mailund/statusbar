@@ -2,11 +2,8 @@
 
 import shutil
 import itertools
-import colorama
 import termcolor
 from math import log10, ceil
-
-colorama.init()
 
 
 class _ProgressChunk:

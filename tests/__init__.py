@@ -73,7 +73,10 @@ class TestProgressBar(unittest.TestCase):
         pb.add_progress(2, '#',
                         color="red", on_color="on_green", attrs=["bold"])
         progress = pb.format_progress(5)
-        self.assertEqual(progress, "[\x1b[4m\x1b[41m\x1b[32m.\x1b[0m\x1b[1m\x1b[42m\x1b[31m##\x1b[0m]")
+        self.assertEqual(
+            progress,
+            "[\x1b[4m\x1b[41m\x1b[32m.\x1b[0m\x1b[1m\x1b[42m\x1b[31m##\x1b[0m]"
+        )
 
     def test_summary_string(self):
         pb = statusbar.ProgressBar()
@@ -118,8 +121,10 @@ class TestProgressBar(unittest.TestCase):
         estimated_length = pb.summary_width()
         summary_string = pb.format_summary()
         self.assertEqual(estimated_length, 5)
-        self.assertEqual(summary_string,
-                 termcolor.colored("10")+"/"+termcolor.colored("10"))
+        self.assertEqual(
+            summary_string,
+            termcolor.colored("10")+"/"+termcolor.colored("10")
+        )
 
         pb = statusbar.ProgressBar()
         pb.add_progress(99, '.')
