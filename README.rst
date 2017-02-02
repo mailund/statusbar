@@ -59,3 +59,4 @@ This package can be used to show status information through one or more lines of
    sb.add_progress(5, ".")
    sb.add_progress(10, " ")
    print("\n".join(st.format_table()))
+
