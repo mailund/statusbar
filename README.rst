@@ -4,7 +4,7 @@ Statusbar
 
 Python package for displaying status information in command line interfaces.
 
-|ci-status| |coveralls| |license| |versions| |status| |pyversions| |downloads|
+|ci-status| |coveralls| |codacy| |license| |versions| |status| |pyversions| |downloads|
 
 .. |ci-status| image:: 	https://img.shields.io/travis/mailund/statusbar.svg
     :target: https://travis-ci.org/mailund/statusbar
@@ -12,6 +12,7 @@ Python package for displaying status information in command line interfaces.
 .. |coveralls| image:: https://img.shields.io/coveralls/mailund/statusbar.svg
     :target: https://coveralls.io/github/mailund/statusbar
     :alt: Coverage
+.. |codacy| image:: https://img.shields.io/codacy/grade/b54b5ad32f964b8b9e5390b72c04964c/master.svg
 .. |license| image:: https://img.shields.io/pypi/l/statusbar.svg
     :target: https://pypi.python.org/pypi/statusbar
     :alt: License

@@ -6,9 +6,12 @@ python:
 install:
 - make init
 - pip install coveralls==1.1
+- pip install codacy-coverage
 script: make test && make lint
 after_success:
 - coveralls
+- coverage xml
+- CODACY_PROJECT_TOKEN=b54b5ad32f964b8b9e5390b72c04964c python-codacy-coverage -r coverage.xml
 deploy:
   provider: pypi
   user: mailund
