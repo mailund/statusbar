@@ -13,6 +13,8 @@ Python package for displaying status information in command line interfaces.
     :target: https://coveralls.io/github/mailund/statusbar
     :alt: Coverage
 .. |codacy| image:: https://img.shields.io/codacy/grade/b54b5ad32f964b8b9e5390b72c04964c/master.svg
+    :target: https://www.codacy.com/app/mailund/statusbar?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mailund/statusbar&amp;utm_campaign=Badge_Grade
+    :alt: Codacy code review
 .. |license| image:: https://img.shields.io/pypi/l/statusbar.svg
     :target: https://pypi.python.org/pypi/statusbar
     :alt: License
