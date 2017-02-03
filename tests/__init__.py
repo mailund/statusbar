@@ -1,7 +1,6 @@
 import unittest
 import termcolor
 import statusbar
-import string
 
 
 class TestProgressBar(unittest.TestCase):
@@ -149,30 +148,29 @@ class TestProgressBar(unittest.TestCase):
 class TestStatusBar(unittest.TestCase):
     """Test of a status bar."""
 
-    @classmethod
     def test_status_formatting(self):
         sb = statusbar.StatusBar("Test")
         sb.add_progress(2, '#')
         sb.add_progress(2, '.')
         result = sb.format_status(15)
         # -- I don't actually know how to get the visible string length
-        #self.assertEqual(len(result), 15) 
+        # self.assertEqual(len(result), 15)
 
         sb.set_progress_brackets("", "")
         result = sb.format_status(15)
-        #self.assertEqual(len(result), 15)
+        # self.assertEqual(len(result), 15)
 
         sb = statusbar.StatusBar("Long label")
         sb.add_progress(2, '#')
         sb.add_progress(2, '.')
         result = sb.format_status(15, label_width=4)
-        #self.assertEqual(len(result), 15)
+        # self.assertEqual(len(result), 15)
 
         sb = statusbar.StatusBar("Long label")
         sb.add_progress(2, '#')
         sb.add_progress(2, '.')
         result = sb.format_status(26, label_width=15)
-        #self.assertEqual(len(result), 26)
+        # self.assertEqual(len(result), 26)
 
         result = sb.format_status(label_width=4,
                                   progress_width=10)
@@ -181,6 +179,7 @@ class TestStatusBar(unittest.TestCase):
                                   progress_width=10,
                                   summary_width=5)
 
+        self.assertEqual(len(result), 35)  # this is only to avoid lint issues
 
 
 class TestStatusTable(unittest.TestCase):
