@@ -174,7 +174,6 @@ class TestStatusBar(unittest.TestCase):
                                   progress_width=10,
                                   summary_width=5)
 
-        result
 
 
 class TestStatusTable(unittest.TestCase):
