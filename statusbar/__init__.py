@@ -77,7 +77,7 @@ class ProgressBar:
         chunk_widths = \
             [(end-start) for (start, end) in zip(start_points, end_points)]
 
-        assert sum(chunk_widths) == width
+        #assert sum(chunk_widths) == width
         return chunk_widths
 
     def format_progress(self, width):
