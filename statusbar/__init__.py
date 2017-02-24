@@ -119,9 +119,10 @@ class StatusBar:
     """
 
     def __init__(self, label,
-                 progress_sep_start='[', progress_sep_end=']'):
+                 progress_sep_start='[', progress_sep_end=']', fill_char='.'):
         """Construct a status bar."""
         self.label = label
+        self.fill_char = fill_char
         self._progress = ProgressBar(progress_sep_start, progress_sep_end)
 
     def set_progress_brackets(self, start, end):
@@ -170,7 +171,7 @@ class StatusBar:
             # be an extreme situation so I won't fix it just yet.
             label = self.label[:label_width - 3] + "..."
         else:
-            label_format = "{{label:.<{width}}}".format(width=label_width)
+            label_format = "{{label:{fill_char}<{width}}}".format(width=label_width, fill_char=self.fill_char)
             label = label_format.format(label=self.label)
 
         summary_format = "{{:>{width}}}".format(width=summary_width)
