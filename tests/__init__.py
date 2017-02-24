@@ -181,6 +181,17 @@ class TestStatusBar(unittest.TestCase):
 
         self.assertEqual(len(result), 35)  # this is only to avoid lint issues
 
+    def test_formatting_with_fill_char(self):
+        sb = statusbar.StatusBar("Test", fill_char=' ')
+        sb.add_progress(1, '#')
+        result = sb.format_status(15, label_width=5)
+        self.assertTrue(result.startswith('Test  '))
+
+        sb = statusbar.StatusBar("Test", fill_char='_')
+        sb.add_progress(1, '#')
+        result = sb.format_status(15, label_width=5)
+        self.assertTrue(result.startswith('Test_ '))
+
 
 class TestStatusTable(unittest.TestCase):
     """Test of a status table."""
