@@ -171,7 +171,9 @@ class StatusBar:
             # be an extreme situation so I won't fix it just yet.
             label = self.label[:label_width - 3] + "..."
         else:
-            label_format = "{{label:{fill_char}<{width}}}".format(width=label_width, fill_char=self.fill_char)
+            label_format = "{{label:{fill_char}<{width}}}".format(
+                width=label_width,
+                fill_char=self.fill_char)
             label = label_format.format(label=self.label)
 
         summary_format = "{{:>{width}}}".format(width=summary_width)
