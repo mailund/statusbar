@@ -191,11 +191,14 @@ class StatusBar:
 class StatusTable:
     """Several lines of status bars with the three fields aligned."""
 
-    def __init__(self, progress_sep_start='[', progress_sep_end=']'):
+    def __init__(self,
+                 progress_sep_start='[', progress_sep_end=']',
+                 fill_char='.'):
         """Create a status table."""
         self._lines = []
         self._sep_start = progress_sep_start
         self._sep_end = progress_sep_end
+        self._fill_char = fill_char
 
     def add_status_line(self, label):
         """Add a status bar line to the table.
@@ -203,7 +206,9 @@ class StatusTable:
         This function returns the status bar and it can be modified
         from this return value.
         """
-        status_line = StatusBar(label, self._sep_start, self._sep_end)
+        status_line = StatusBar(label,
+                                self._sep_start, self._sep_end,
+                                self._fill_char)
         self._lines.append(status_line)
         return status_line
 
