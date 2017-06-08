@@ -25,5 +25,5 @@ mkdir /tmp/builds
 conda convert --platform all /tmp/miniconda/conda-bld/linux-64/statusbar-*-*_0.tar.bz2 -o /tmp/builds
 
 for f in $(ls /tmp/builds/*/*.tar.bz2); do
-    anaconda -u mailund -t $ANACONDA_TOKEN upload $f
+    anaconda --user mailund -t $ANACONDA_TOKEN upload $f
 done
