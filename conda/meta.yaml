@@ -7,9 +7,10 @@ package:
 source:
   path: ../
 
- build:
+build:
   noarch_python: True
   preserve_egg_dir: True
+
 
 requirements:
   build:
