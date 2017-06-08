@@ -1,32 +1,61 @@
 language: python
-sudo: required
+
+sudo: false
+
 python:
 - '3.4'
 - '3.5'
 - '3.6'
+
 env:
 - PYPI_URL=https://pypi.python.org/pypi
+
+
+before_install:
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - conda update --yes -q conda
+  - conda config --set always_yes true
+  - conda config --set anaconda_upload no
+  - conda config --add channels dansondergaard
+
 install:
-- pip install --upgrade pip
-- pip install coveralls==1.*
-- pip install codacy-coverage
-- pip install -r requirements.txt
-- pip install .
+  - conda install -q python=$TRAVIS_PYTHON_VERSION pip conda-build anaconda-client
+  - pip install coveralls
+  - pip install codacy-coverage
+  - pip install -r requirements.txt
+  - pip install .
+  - conda build conda/
+  - conda install --use-local statusbar
+
 script: make test && make lint
+
 after_success:
 - coveralls
 - coverage xml
 - CODACY_PROJECT_TOKEN=b54b5ad32f964b8b9e5390b72c04964c python-codacy-coverage -r coverage.xml
+- chmod +x ./deploy_conda.sh
+
+
 deploy:
-  provider: pypi
-  user: mailund
-  server: $PYPI_URL
-  password:
-    secure: nQg5tbd7n77rPgy77g9SK0buvzVW/j+tvAteID4v7zP25LsdIWft1v02+huanw7NHCVcv7U29o/ExWjeq0zt5liJnJClRCbcTAczhcCd7UhAjlQyGNiI/1nOfyozbk3lbaEg8gJUBW2EMEEdiJoGP6iyHWwLj9YcWZTXFw3olkExGCkrs7u3kKhTUdenIqmPHXS7/KCwafte2zy/Iu10gonOxCP8NUYbhpcqcFEmyd54AVXorqGQU4IsrgNmxSaclK4PyNKPEl0iYfNB7GAPvIt0lsmy7NwmAz5SaBYJRs9Jf3hRmdduUVhoqx/iZmg1Zc1NmvQlG5oi465mpuY4K6oZOLmLn36/Uq8Y5iJMjE1r9nWOJxKaVJSgBnqUHViT5suErKDetmuobmA9qNoceGwW59qNG7BIaRmvOvjAfRgb2V1vYMusjZXxGxmJFKKIvnwUicNUw6U1vg/pRN4zk0n8mAfSe4dTudfofCamR0aeH6L/BCHGk+W7CGObBpP++WX85pz4FRZ3O4ZXTBFWFglNZfkpdEBY7AoFLakUaz2g4zOFVIMpt8iowOKbF2KLGZCol5CcmB+GTB7jsAOpZYUv0YTHrI+93WQutfPQIA+3txtH6ebO12zHd4RJgNv4hEGz4p9zoI+xE7BLtkfm8HQd3lw/clqNfgAPGRXPtJs=
-  distributions: sdist bdist_wheel
-  skip_cleanup: true
-  skip_upload_docs: true
-  on:
-    tags: true
-    repo: mailund/statusbar
-after_deploy: bash build_conda.sh
+  - provider: pypi
+    user: mailund
+    server: $PYPI_URL
+    password:
+      secure: nQg5tbd7n77rPgy77g9SK0buvzVW/j+tvAteID4v7zP25LsdIWft1v02+huanw7NHCVcv7U29o/ExWjeq0zt5liJnJClRCbcTAczhcCd7UhAjlQyGNiI/1nOfyozbk3lbaEg8gJUBW2EMEEdiJoGP6iyHWwLj9YcWZTXFw3olkExGCkrs7u3kKhTUdenIqmPHXS7/KCwafte2zy/Iu10gonOxCP8NUYbhpcqcFEmyd54AVXorqGQU4IsrgNmxSaclK4PyNKPEl0iYfNB7GAPvIt0lsmy7NwmAz5SaBYJRs9Jf3hRmdduUVhoqx/iZmg1Zc1NmvQlG5oi465mpuY4K6oZOLmLn36/Uq8Y5iJMjE1r9nWOJxKaVJSgBnqUHViT5suErKDetmuobmA9qNoceGwW59qNG7BIaRmvOvjAfRgb2V1vYMusjZXxGxmJFKKIvnwUicNUw6U1vg/pRN4zk0n8mAfSe4dTudfofCamR0aeH6L/BCHGk+W7CGObBpP++WX85pz4FRZ3O4ZXTBFWFglNZfkpdEBY7AoFLakUaz2g4zOFVIMpt8iowOKbF2KLGZCol5CcmB+GTB7jsAOpZYUv0YTHrI+93WQutfPQIA+3txtH6ebO12zHd4RJgNv4hEGz4p9zoI+xE7BLtkfm8HQd3lw/clqNfgAPGRXPtJs=
+    distributions: sdist bdist_wheel
+    skip_cleanup: true
+    skip_upload_docs: true
+    on:
+      tags: true
+      python: 3.4
+      repo: mailund/statusbar
+  - provider: script
+    script: ./deploy_conda.sh
+    skip_cleanup: true
+    skip_upload_docs: true
+    on:
+      tags: true
+      python: 3.4
