@@ -28,7 +28,7 @@ install:
   - conda build conda/
   - conda install --use-local statusbar
 
-script: make test && make lint
+script: make test
 
 after_success:
 - coveralls
