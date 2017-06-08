@@ -11,7 +11,7 @@ def read(fname):
 
 setup(
     name="statusbar",
-    version="0.1.12",
+    version="0.1.13",
 
     packages=find_packages(),
 

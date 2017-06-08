@@ -14,7 +14,7 @@ export PATH="/tmp/miniconda/bin:$PATH"
 
 # Configure and update...
 conda config --set always_yes yes --set changeps1 no
-conda config --add channels mailund
+conda config --add channels omnia
 conda update -q conda
 conda install anaconda-client conda-build
 
