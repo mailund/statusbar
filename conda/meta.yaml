@@ -1,0 +1,33 @@
+{% set data = load_setup_py_data() %}
+
+package:
+  name: statusbar
+  version: {{ data.get('version') }}
+
+source:
+  path: ../
+
+ build:
+  noarch_python: True
+  preserve_egg_dir: True
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - termcolor >=1.1.0
+
+  run:
+    - python
+    - termcolor >=1.1.0
+
+test:
+  imports:
+    - statusbar
+    - tests
+
+about:
+  home: https://github.com/mailund/statusbar
+  license: GNU General Public License v3 or later (GPLv3+)
+  summary: 'Module for displaying (text based) status update lines.'
+  license_family: GPL3
